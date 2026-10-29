@@ -41,13 +41,21 @@ describe("RF-01: creación de correos", () => {
     expect(correo1.getId()).not.toBe(correo2.getId());
 });
 
+    it("conserva estados iniciales", () => {
+        const maria = new Contacto("Maria", "maria@gmail.com");
+        const carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+        const correo = new Correo(1, "Navidad", "El 25 de diciembre es Navidad", maria, [carlos]);
+
+        expect(correo.getLeido()).toBe(false);
+        expect(correo.getFavorito()).toBe(false);
+    });
+    
     it("conserva la información recibida y los estados iniciales", () => {
         const maria = new Contacto("Maria", "maria@gmail.com");
-        const carlos = new Contacto("Carlos", "carlos@ucp.com");
+        const carlos = new Contacto("Carlos", "carlos@gmail.com");
 
-        const correo = new Correo(
-            1, "Navidad", "El 25 de diciembre es Navidad", maria, [carlos]
-        );
+        const correo = new Correo(1, "Navidad", "El 25 de diciembre es Navidad", maria, [carlos]);
 
         expect(correo.getId()).toBe(1);
         expect(correo.getAsunto()).toBe("Navidad");
@@ -58,23 +66,23 @@ describe("RF-01: creación de correos", () => {
         expect(correo.getFavorito()).toBe(false);
     });
 
+
     it("validar los datos obligatorios de contacto", () => {
         expect(() => { new Contacto("Maria", " ");
-
+            
         }).toThrow("Formato de email inválido");
     });
-        expect(() => {new Contacto("   ", "maria@email.com");
+        expect(() => {new Contacto("   ", "maria@gmail.com");
 
         }).toThrow("El nombre completo es obligatorio");
 
-    it("conserva sus destinatarios aunque se modifique el array original", () => {
-    const maria = new Contacto("Maria", "maria@email.edu.ar");
-    const carlos = new Contacto("Carlos", "carlos@email.edu.ar");
+    
+    it("conserva sus destinatarios ante modificaciones", () => {
+    const maria = new Contacto("Maria", "maria@gmail.com");
+    const carlos = new Contacto("Carlos", "carlos@gmail.com");
     const destinatarios = [carlos];
 
-    const correo = new Correo(
-        1, "Consulta", "Primera consulta", maria, destinatarios
-    );
+    const correo = new Correo(1, "Consulta", "Primera consulta", maria, destinatarios);
 
     // Quitamos a Carlos del array externo.
     destinatarios.pop();
