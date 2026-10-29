@@ -23,4 +23,21 @@ describe("RF-01: creación de correos", () => {
         expect(correo2.getDestinatarios()).toEqual([maria]); 
     
 });
+
+    it("cada correo tiene un id unico", () => {
+    const maria = new Contacto("María", "maria@email.edu.ar");
+    const carlos = new Contacto("Carlos", "carlos@email.edu.ar");
+
+    const correo1 = new Correo(
+        1, "Consulta", "Mismo contenido", maria, [carlos]
+    );
+
+    const correo2 = new Correo(
+        2, "Consulta", "Mismo contenido", maria, [carlos]
+    );
+
+    expect(correo1.getId()).toBe(1);
+    expect(correo2.getId()).toBe(2);
+    expect(correo1.getId()).not.toBe(correo2.getId());
+});
 });
