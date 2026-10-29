@@ -6,16 +6,16 @@ export class Correo implements ICorreo{
     private _asunto: string;
     private _contenido: string;
     private _remitente: IContacto;
-    private _destinatarios: readonly IContacto[];
+    private _destinatarios: IContacto[];
     private _leido: boolean;
     private _favorito: boolean;
 
-    constructor(id: number, asunto: string, contenido: string, remitente: IContacto, destinatarios: readonly IContacto[]){
+    constructor(id: number, asunto: string, contenido: string, remitente: IContacto, destinatarios: IContacto[]){
         this._id = id;
         this._asunto = asunto;
         this._contenido = contenido;
         this._remitente = remitente;
-        this._destinatarios = destinatarios;
+        this._destinatarios = [...destinatarios];
         this._leido = false;
         this._favorito = false;
     }
