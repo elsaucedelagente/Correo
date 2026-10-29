@@ -49,13 +49,43 @@ export class Contacto {
 
     this.nombreCompleto = nombre;
     this.email = mail;
-    // Object.freeze "congela" el objeto: nadie puede agregarle ni cambiarle propiedades
-    // desde afuera. Es un seguro extra de inmutabilidad.
+    // Object.freeze "congela" el objeto: nadie puede agregarle ni cambiarle propiedades desde afuera. 
     Object.freeze(this);
   }
  
 
   get dominio(): string {
     return this.email.split('@')[1];
+  }
+  // Compara dos contactosos contactos son "el mismo" si tienen el mismo email,
+  // aunque el nombre sea distinto. Con esto la Agenda puede detectar duplicados.
+  equals(otro: Contacto): boolean {
+    return this.email === otro.email;
+  }
+ 
+  // creamos un contacto NUEVO con el nombre nuevo y el mismo email.
+  // El original queda intacto, así los correos viejos que lo referencian no se alteran.
+  conNombre(nuevoNombre: string): Contacto {
+    return new Contacto(nuevoNombre, this.email);
+  }
+ 
+  // Lo mismo pero cambiando el email. Como pasa por el constructor,
+  // el email nuevo también se valida y se normaliza.
+  conEmail(nuevoEmail: string): Contacto {
+    return new Contacto(this.nombreCompleto, nuevoEmail);
+  }
+ 
+  // Dice si el texto buscado aparece en el nombre o en el email.
+  // Se va a usar en la búsqueda de correos (RF-04), para revisar remitente y destinatarios.
+  coincideCon(texto: string): boolean {
+    // Pasamos lo buscado a minúsculas para no distinguir mayúsculas de minúsculas.
+    const t = texto.toLowerCase();
+    // includes(t) es true si el texto aparece en cualquier parte (coincidencia parcial).
+    // "||" significa "o": alcanza con que coincida el nombre O el email.
+    // El email ya está guardado en minúsculas, por eso no hace falta convertirlo de nuevo.
+    return (
+      this.nombreCompleto.toLowerCase().includes(t) ||
+      this.email.includes(t)
+    );
   }
 }
