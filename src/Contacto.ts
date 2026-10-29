@@ -24,3 +24,38 @@ function esEmailValido(email: string): boolean {
 
   return etiquetas.length >= 2 && etiquetas.every((etiqueta) => etiqueta.length > 0);
 }
+
+export class Contacto {
+
+  readonly nombreCompleto: string;
+  readonly email: string;
+ 
+  constructor(nombreCompleto: string, email: string) 
+  {
+
+    const nombre = nombreCompleto?.trim() ?? '';
+
+    const mail = email?.trim().toLowerCase() ?? '';
+ 
+
+    if (nombre.length === 0) {
+      throw new Error('El nombre completo es obligatorio');
+    }
+
+    if (!esEmailValido(mail)) {
+      throw new Error(`Formato de email inválido: "${email}"`);
+    }
+ 
+
+    this.nombreCompleto = nombre;
+    this.email = mail;
+    // Object.freeze "congela" el objeto: nadie puede agregarle ni cambiarle propiedades
+    // desde afuera. Es un seguro extra de inmutabilidad.
+    Object.freeze(this);
+  }
+ 
+
+  get dominio(): string {
+    return this.email.split('@')[1];
+  }
+}
