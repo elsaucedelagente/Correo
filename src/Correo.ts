@@ -1,7 +1,7 @@
 import {ICorreo} from "./ICorreo";
 import {IContacto} from "./IContacto";
 
-export class Correo {
+export class Correo implements ICorreo{
     private readonly _id: number;
     private _asunto: string;
     private _contenido: string;
@@ -10,10 +10,15 @@ export class Correo {
     private _leido: boolean;
     private _favorito: boolean;
 
-    constructor(
-        
-
-    )
+    constructor(id: number, asunto: string, contenido: string, remitente: IContacto, destinatarios: readonly IContacto[]){
+        this._id = id;
+        this._asunto = asunto;
+        this._contenido = contenido;
+        this._remitente = remitente;
+        this._destinatarios = destinatarios;
+        this._leido = false;
+        this._favorito = false;
+    }
 
     getId(): number{
         return this._id;
