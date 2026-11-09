@@ -52,7 +52,14 @@ export class Contacto {
     // Object.freeze "congela" el objeto: nadie puede agregarle ni cambiarle propiedades desde afuera. 
     Object.freeze(this);
   }
- 
+
+  getNombreCompleto(): string {
+    return this._nombreCompleto;
+  }
+
+  getEmail(): string {
+    return this._email;
+  }
 
   get dominio(): string {
     return this._email.split('@')[1];
