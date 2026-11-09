@@ -76,7 +76,14 @@ describe("RF-01: creación de correos", () => {
 
         }).toThrow("El nombre completo es obligatorio");
 
-    
+    it("expone el nombre y el email normalizado", () => {
+        const _maria = new Contacto("  Maria Perez ", " Maria@Gmail.com ");
+
+        expect(_maria.getNombreCompleto()).toBe("Maria Perez");
+        expect(_maria.getEmail()).toBe("maria@gmail.com");
+    });
+
+
     it("conserva sus destinatarios ante modificaciones", () => {
     const maria = new Contacto("Maria", "maria@gmail.com");
     const carlos = new Contacto("Carlos", "carlos@gmail.com");
