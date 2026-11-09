@@ -67,14 +67,17 @@ describe("RF-01: creación de correos", () => {
     });
 
 
-    it("validar los datos obligatorios de contacto", () => {
-        expect(() => { new Contacto("Maria", " ");
-            
+    it("rechaza un email con formato inválido", () => {
+        expect(() => {
+            new Contacto("Maria", " ");
         }).toThrow("Formato de email inválido");
     });
-        expect(() => {new Contacto("   ", "maria@gmail.com");
 
+    it("rechaza un nombre vacío", () => {
+        expect(() => {
+            new Contacto("   ", "maria@gmail.com");
         }).toThrow("El nombre completo es obligatorio");
+    });
 
     it("expone el nombre y el email normalizado", () => {
         const _maria = new Contacto("  Maria Perez ", " Maria@Gmail.com ");
