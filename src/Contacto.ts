@@ -1,3 +1,5 @@
+import { IContacto } from './IContacto';
+
 // Función auxiliar: decide si un texto tiene formato de email válido.
 // No es parte de la clase; es una función suelta que solo se usa acá
 function esEmailValido(email: string): boolean {
@@ -25,7 +27,7 @@ function esEmailValido(email: string): boolean {
   return etiquetas.length >= 2 && etiquetas.every((etiqueta) => etiqueta.length > 0);
 }
 
-export class Contacto {
+export class Contacto implements IContacto {
 
   private readonly _nombreCompleto: string;
   private readonly _email: string;
