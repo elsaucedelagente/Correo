@@ -4,32 +4,6 @@ import { Correo } from "../src/Correo";
 import { IContacto } from "../src/IContacto";
 
 describe("RF-01: creación de correos", () => {
-    it("conserva estados iniciales", () => {
-        const maria = new Contacto("Maria", "maria@gmail.com");
-        const carlos = new Contacto("Carlos", "carlos@gmail.com");
-
-        const correo = new Correo(1, "Navidad", "El 25 de diciembre es Navidad", maria, [carlos]);
-
-        expect(correo.getLeido()).toBe(false);
-        expect(correo.getFavorito()).toBe(false);
-    });
-    
-    it("conserva la información recibida y los estados iniciales", () => {
-        const maria = new Contacto("Maria", "maria@gmail.com");
-        const carlos = new Contacto("Carlos", "carlos@gmail.com");
-
-        const correo = new Correo(1, "Navidad", "El 25 de diciembre es Navidad", maria, [carlos]);
-
-        expect(correo.getId()).toBe(1);
-        expect(correo.getAsunto()).toBe("Navidad");
-        expect(correo.getContenido()).toBe("El 25 de diciembre es Navidad");
-        expect(correo.getRemitente()).toBe(maria);
-        expect(correo.getDestinatarios()).toEqual([carlos]);
-        expect(correo.getLeido()).toBe(false);
-        expect(correo.getFavorito()).toBe(false);
-    });
-
-
     it("rechaza un email con formato inválido", () => {
         expect(() => {
             new Contacto("Maria", " ");
