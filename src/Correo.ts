@@ -9,6 +9,7 @@ export class Correo implements ICorreo{
     private _destinatarios: IContacto[];
     private _leido: boolean;
     private _favorito: boolean;
+    private _enviado: boolean;
 
     constructor(id: number, asunto: string, contenido: string, remitente: IContacto, destinatarios: IContacto[]){
         if (!remitente) {
@@ -24,6 +25,7 @@ export class Correo implements ICorreo{
         }
         this._leido = false;
         this._favorito = false;
+        this._enviado = false;
     }
 
     getId(): number{
@@ -70,6 +72,15 @@ export class Correo implements ICorreo{
 
     puedeEnviarse(): boolean {
         return this.validarParaEnvio().length === 0;
+    }
+
+    // Mientras no está enviado, el correo es un borrador (RF-07).
+    estaEnviado(): boolean {
+        return this._enviado;
+    }
+
+    marcarComoEnviado(): void {
+        this._enviado = true;
     }
 
     // Dos contactos con el mismo email son el mismo destinatario,
