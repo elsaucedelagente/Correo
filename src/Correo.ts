@@ -18,7 +18,10 @@ export class Correo implements ICorreo{
         this._asunto = asunto;
         this._contenido = contenido;
         this._remitente = remitente;
-        this._destinatarios = [...destinatarios];
+        this._destinatarios = [];
+        for (const _destinatario of destinatarios) {
+            this.agregarSinRepetir(_destinatario);
+        }
         this._leido = false;
         this._favorito = false;
     }
@@ -52,7 +55,12 @@ export class Correo implements ICorreo{
         return this._favorito;
     }
 
-
-    
-
+    // Dos contactos con el mismo email son el mismo destinatario,
+    // así que solo se agrega si todavía no está en la lista.
+    private agregarSinRepetir(destinatario: IContacto): void {
+        const _yaEsta = this._destinatarios.some((_d) => _d.equals(destinatario));
+        if (!_yaEsta) {
+            this._destinatarios.push(destinatario);
+        }
+    }
 }
