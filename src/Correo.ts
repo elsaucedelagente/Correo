@@ -75,18 +75,22 @@ export class Correo implements ICorreo{
     }
 
     setAsunto(asunto: string): void {
+        this.verificarQueSeaBorrador();
         this._asunto = asunto;
     }
 
     setContenido(contenido: string): void {
+        this.verificarQueSeaBorrador();
         this._contenido = contenido;
     }
 
     agregarDestinatario(destinatario: IContacto): void {
+        this.verificarQueSeaBorrador();
         this.agregarSinRepetir(destinatario);
     }
 
     quitarDestinatario(destinatario: IContacto): void {
+        this.verificarQueSeaBorrador();
         this._destinatarios = this._destinatarios.filter((_d) => !_d.equals(destinatario));
     }
 
@@ -105,6 +109,13 @@ export class Correo implements ICorreo{
             throw new Error(`No se puede enviar: ${_errores.join(", ")}`);
         }
         this._enviado = true;
+    }
+
+    // Solo los borradores se pueden editar; un correo enviado queda fijo.
+    private verificarQueSeaBorrador(): void {
+        if (this._enviado) {
+            throw new Error("Un correo enviado no se puede modificar");
+        }
     }
 
     // Dos contactos con el mismo email son el mismo destinatario,

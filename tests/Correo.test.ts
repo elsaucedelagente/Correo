@@ -186,4 +186,14 @@ describe("RF-07: borradores", () => {
         _correo.quitarDestinatario(_carlos);
         expect(_correo.getDestinatarios()).toEqual([_ana]);
     });
+
+    it("un correo enviado ya no se puede editar", () => {
+        const _correo = new Correo(1, "Consulta", "Hola", _maria, [_carlos]);
+        _correo.marcarComoEnviado();
+
+        expect(() => _correo.setAsunto("Otro")).toThrow("Un correo enviado no se puede modificar");
+        expect(() => _correo.setContenido("Otro")).toThrow("Un correo enviado no se puede modificar");
+        expect(() => _correo.agregarDestinatario(_maria)).toThrow("Un correo enviado no se puede modificar");
+        expect(() => _correo.quitarDestinatario(_carlos)).toThrow("Un correo enviado no se puede modificar");
+    });
 });
