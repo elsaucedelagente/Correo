@@ -149,3 +149,74 @@ describe("RF-02: envío de correos", () => {
         expect(_correo.estaEnviado()).toBe(false);
     });
 });
+
+describe("RF-06: eliminar correos", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("un correo de Entrada eliminado pasa a Eliminados", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+
+        _buzon.eliminar(_correo);
+
+        expect(_buzon.cantidad("Entrada")).toBe(0);
+        expect(_buzon.listar("Eliminados")).toEqual([_correo]);
+        expect(_buzon.ubicacion(_correo)).toBe("Eliminados");
+    });
+
+    it("se pueden eliminar correos enviados y borradores", () => {
+        const _buzon = new Buzon();
+        const _enviado = new Correo(1, "Hola", "Texto", _maria, [_carlos]);
+        const _borrador = new Correo(2, "", "", _maria, []);
+        _buzon.enviar(_enviado);
+        _buzon.guardarBorrador(_borrador);
+
+        _buzon.eliminar(_enviado);
+        _buzon.eliminar(_borrador);
+
+        expect(_buzon.cantidad("Enviados")).toBe(0);
+        expect(_buzon.cantidad("Borradores")).toBe(0);
+        expect(_buzon.listar("Eliminados")).toEqual([_enviado, _borrador]);
+    });
+
+    it("recuerda la bandeja de origen del correo eliminado", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _maria, [_carlos]);
+        _buzon.enviar(_correo);
+
+        expect(_buzon.origen(_correo)).toBeUndefined();
+        _buzon.eliminar(_correo);
+
+        expect(_buzon.origen(_correo)).toBe("Enviados");
+    });
+
+    it("no se puede eliminar dos veces el mismo correo", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+        _buzon.eliminar(_correo);
+
+        expect(() => _buzon.eliminar(_correo)).toThrow("ya está eliminado");
+        expect(_buzon.cantidad("Eliminados")).toBe(1);
+    });
+
+    it("no se puede eliminar un correo que no está en el buzón", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+
+        expect(() => _buzon.eliminar(_correo)).toThrow("no está en el buzón");
+        expect(_buzon.cantidad("Eliminados")).toBe(0);
+    });
+
+    it("un correo eliminado no se puede enviar", () => {
+        const _buzon = new Buzon();
+        const _borrador = new Correo(1, "Hola", "Texto", _maria, [_carlos]);
+        _buzon.guardarBorrador(_borrador);
+        _buzon.eliminar(_borrador);
+
+        expect(() => _buzon.enviar(_borrador)).toThrow('No se puede enviar un correo de la bandeja "Eliminados"');
+        expect(_borrador.estaEnviado()).toBe(false);
+    });
+});

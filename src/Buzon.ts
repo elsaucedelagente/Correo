@@ -8,6 +8,8 @@ export type NombreBandeja = "Entrada" | "Enviados" | "Borradores" | "Eliminados"
 // un correo a una bandeja salteándose las reglas del dominio.
 export class Buzon {
     private readonly _bandejas: Map<NombreBandeja, Bandeja>;
+    // Para cada correo eliminado (por id), la bandeja de la que vino.
+    private readonly _origenes = new Map<number, NombreBandeja>();
 
     constructor() {
         this._bandejas = new Map<NombreBandeja, Bandeja>([
@@ -69,6 +71,27 @@ export class Buzon {
             this.bandeja("Borradores").quitar(correo);
         }
         this.bandeja("Enviados").agregar(correo);
+    }
+
+    // Eliminación lógica (RF-06): el correo pasa a Eliminados y se recuerda
+    // su bandeja de origen para poder restaurarlo después.
+    eliminar(correo: ICorreo): void {
+        const _actual = this.ubicacion(correo);
+        if (_actual === undefined) {
+            throw new Error(`El correo ${correo.getId()} no está en el buzón`);
+        }
+        if (_actual === "Eliminados") {
+            throw new Error(`El correo ${correo.getId()} ya está eliminado`);
+        }
+
+        this.bandeja(_actual).quitar(correo);
+        this.bandeja("Eliminados").agregar(correo);
+        this._origenes.set(correo.getId(), _actual);
+    }
+
+    // Bandeja de la que vino un correo eliminado, o undefined si no está eliminado.
+    origen(correo: ICorreo): NombreBandeja | undefined {
+        return this._origenes.get(correo.getId());
     }
 
     private bandeja(nombre: NombreBandeja): Bandeja {
