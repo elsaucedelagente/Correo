@@ -10,5 +10,7 @@ export interface ICorreo {
   getFavorito(): boolean;
   validarParaEnvio(): string[];
   puedeEnviarse(): boolean;
+  estaEnviado(): boolean;
+  marcarComoEnviado(): void;
 
 }

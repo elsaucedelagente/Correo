@@ -136,3 +136,17 @@ describe("RF-01: validación para envío", () => {
         expect(_incompleto.puedeEnviarse()).toBe(false);
     });
 });
+
+describe("RF-07: borradores", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("es borrador hasta que se marca como enviado", () => {
+        const _correo = new Correo(1, "Consulta", "Hola", _maria, [_carlos]);
+        expect(_correo.estaEnviado()).toBe(false);
+
+        _correo.marcarComoEnviado();
+
+        expect(_correo.estaEnviado()).toBe(true);
+    });
+});
