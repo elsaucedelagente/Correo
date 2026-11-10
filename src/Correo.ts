@@ -79,7 +79,15 @@ export class Correo implements ICorreo{
         return this._enviado;
     }
 
+    // Solo se envía un correo completo, y una sola vez.
     marcarComoEnviado(): void {
+        if (this._enviado) {
+            throw new Error("El correo ya fue enviado");
+        }
+        const _errores = this.validarParaEnvio();
+        if (_errores.length > 0) {
+            throw new Error(`No se puede enviar: ${_errores.join(", ")}`);
+        }
         this._enviado = true;
     }
 

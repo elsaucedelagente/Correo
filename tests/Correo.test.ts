@@ -149,4 +149,18 @@ describe("RF-07: borradores", () => {
 
         expect(_correo.estaEnviado()).toBe(true);
     });
+
+    it("un borrador incompleto no se puede marcar como enviado", () => {
+        const _correo = new Correo(1, "", "Hola", _maria, [_carlos]);
+
+        expect(() => _correo.marcarComoEnviado()).toThrow("El asunto es obligatorio");
+        expect(_correo.estaEnviado()).toBe(false);
+    });
+
+    it("no se puede enviar dos veces", () => {
+        const _correo = new Correo(1, "Consulta", "Hola", _maria, [_carlos]);
+        _correo.marcarComoEnviado();
+
+        expect(() => _correo.marcarComoEnviado()).toThrow("El correo ya fue enviado");
+    });
 });
