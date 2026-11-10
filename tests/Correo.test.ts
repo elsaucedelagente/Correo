@@ -112,4 +112,19 @@ describe("RF-01: validación para envío", () => {
 
         expect(_correo.validarParaEnvio()).toEqual(["El asunto es obligatorio"]);
     });
+
+    it("un correo sin destinatarios no se puede enviar", () => {
+        const _correo = new Correo(1, "Consulta", "Hola", _maria, []);
+
+        expect(_correo.validarParaEnvio()).toEqual(["Debe tener al menos un destinatario"]);
+    });
+
+    it("informa todos los problemas juntos", () => {
+        const _correo = new Correo(1, "", "", _maria, []);
+
+        expect(_correo.validarParaEnvio()).toEqual([
+            "El asunto es obligatorio",
+            "Debe tener al menos un destinatario",
+        ]);
+    });
 });

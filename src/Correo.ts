@@ -62,6 +62,9 @@ export class Correo implements ICorreo{
         if (this._asunto.trim() === "") {
             _errores.push("El asunto es obligatorio");
         }
+        if (this._destinatarios.length === 0) {
+            _errores.push("Debe tener al menos un destinatario");
+        }
         return _errores;
     }
 
