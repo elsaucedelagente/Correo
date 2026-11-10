@@ -85,4 +85,14 @@ describe("RF-01: creación de correos", () => {
             new Correo(1, "Consulta", "Hola", undefined as unknown as Contacto, [_carlos]);
         }).toThrow("El remitente es obligatorio");
     });
+
+    it("no repite destinatarios con el mismo email", () => {
+        const _maria = new Contacto("Maria", "maria@gmail.com");
+        const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+        const _carlosOtraVez = new Contacto("Carlos Gomez", "CARLOS@gmail.com");
+
+        const _correo = new Correo(1, "Consulta", "Hola", _maria, [_carlos, _carlosOtraVez]);
+
+        expect(_correo.getDestinatarios()).toEqual([_carlos]);
+    });
 });
