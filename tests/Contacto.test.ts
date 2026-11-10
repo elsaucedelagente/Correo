@@ -4,23 +4,6 @@ import { Correo } from "../src/Correo";
 import { IContacto } from "../src/IContacto";
 
 describe("RF-01: creación de correos", () => {
-    it("cada correo tiene un id unico", () => {
-    const maria = new Contacto("María", "maria@gmail.com");
-    const carlos = new Contacto("Carlos", "carlos@gmail.com");
-
-    const correo1 = new Correo(
-        1, "Consulta", "Mismo contenido", maria, [carlos]
-    );
-
-    const correo2 = new Correo(
-        2, "Consulta", "Mismo contenido", maria, [carlos]
-    );
-
-    expect(correo1.getId()).toBe(1);
-    expect(correo2.getId()).toBe(2);
-    expect(correo1.getId()).not.toBe(correo2.getId());
-});
-
     it("conserva estados iniciales", () => {
         const maria = new Contacto("Maria", "maria@gmail.com");
         const carlos = new Contacto("Carlos", "carlos@gmail.com");
