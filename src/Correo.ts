@@ -11,6 +11,9 @@ export class Correo implements ICorreo{
     private _favorito: boolean;
 
     constructor(id: number, asunto: string, contenido: string, remitente: IContacto, destinatarios: IContacto[]){
+        if (!remitente) {
+            throw new Error("El remitente es obligatorio");
+        }
         this._id = id;
         this._asunto = asunto;
         this._contenido = contenido;

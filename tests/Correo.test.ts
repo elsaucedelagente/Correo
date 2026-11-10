@@ -77,4 +77,12 @@ describe("RF-01: creación de correos", () => {
         // Carlos debe seguir siendo destinatario del correo.
         expect(correo.getDestinatarios()).toEqual([carlos]);
     });
+
+    it("no permite crear un correo sin remitente", () => {
+        const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+        expect(() => {
+            new Correo(1, "Consulta", "Hola", undefined as unknown as Contacto, [_carlos]);
+        }).toThrow("El remitente es obligatorio");
+    });
 });
