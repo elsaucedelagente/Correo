@@ -163,4 +163,15 @@ describe("RF-07: borradores", () => {
 
         expect(() => _correo.marcarComoEnviado()).toThrow("El correo ya fue enviado");
     });
+
+    it("un borrador incompleto se puede completar y enviar", () => {
+        const _correo = new Correo(1, "", "", _maria, [_carlos]);
+
+        _correo.setAsunto("Consulta");
+        _correo.setContenido("Hola Carlos");
+
+        expect(_correo.getAsunto()).toBe("Consulta");
+        expect(_correo.getContenido()).toBe("Hola Carlos");
+        expect(_correo.puedeEnviarse()).toBe(true);
+    });
 });

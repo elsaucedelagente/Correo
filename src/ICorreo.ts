@@ -12,5 +12,7 @@ export interface ICorreo {
   puedeEnviarse(): boolean;
   estaEnviado(): boolean;
   marcarComoEnviado(): void;
+  setAsunto(asunto: string): void;
+  setContenido(contenido: string): void;
 
 }
