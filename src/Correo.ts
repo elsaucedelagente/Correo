@@ -74,6 +74,14 @@ export class Correo implements ICorreo{
         return this.validarParaEnvio().length === 0;
     }
 
+    setAsunto(asunto: string): void {
+        this._asunto = asunto;
+    }
+
+    setContenido(contenido: string): void {
+        this._contenido = contenido;
+    }
+
     // Mientras no está enviado, el correo es un borrador (RF-07).
     estaEnviado(): boolean {
         return this._enviado;
