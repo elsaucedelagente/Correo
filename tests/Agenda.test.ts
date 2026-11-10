@@ -55,7 +55,6 @@ describe('Agenda', () => {
     agenda.agregar(contacto1);
     const lista1 = agenda.listar();
     
-    // Intentamos mutar el array retornado (si TypeScript lo permite en runtime o modificando la referencia)
     expect(() => {
       (lista1 as Contacto[]).push(contacto2);
     }).not.toThrow(); // El array externo cambia, pero la agenda interna debe mantenerse intacta
