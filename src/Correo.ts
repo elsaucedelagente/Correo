@@ -82,6 +82,14 @@ export class Correo implements ICorreo{
         this._contenido = contenido;
     }
 
+    agregarDestinatario(destinatario: IContacto): void {
+        this.agregarSinRepetir(destinatario);
+    }
+
+    quitarDestinatario(destinatario: IContacto): void {
+        this._destinatarios = this._destinatarios.filter((_d) => !_d.equals(destinatario));
+    }
+
     // Mientras no está enviado, el correo es un borrador (RF-07).
     estaEnviado(): boolean {
         return this._enviado;

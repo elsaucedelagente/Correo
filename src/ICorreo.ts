@@ -14,5 +14,7 @@ export interface ICorreo {
   marcarComoEnviado(): void;
   setAsunto(asunto: string): void;
   setContenido(contenido: string): void;
+  agregarDestinatario(destinatario: IContacto): void;
+  quitarDestinatario(destinatario: IContacto): void;
 
 }

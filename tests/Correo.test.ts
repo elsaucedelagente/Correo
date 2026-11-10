@@ -174,4 +174,16 @@ describe("RF-07: borradores", () => {
         expect(_correo.getContenido()).toBe("Hola Carlos");
         expect(_correo.puedeEnviarse()).toBe(true);
     });
+
+    it("a un borrador se le pueden agregar y quitar destinatarios", () => {
+        const _ana = new Contacto("Ana", "ana@gmail.com");
+        const _correo = new Correo(1, "Consulta", "Hola", _maria, [_carlos]);
+
+        _correo.agregarDestinatario(_ana);
+        _correo.agregarDestinatario(_ana);
+        expect(_correo.getDestinatarios()).toEqual([_carlos, _ana]);
+
+        _correo.quitarDestinatario(_carlos);
+        expect(_correo.getDestinatarios()).toEqual([_ana]);
+    });
 });
