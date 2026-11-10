@@ -1,5 +1,6 @@
 import {ICorreo} from "./ICorreo";
 import {Bandeja} from "./Bandeja";
+import {buscarCorreos} from "./Busqueda";
 
 export type NombreBandeja = "Entrada" | "Enviados" | "Borradores" | "Eliminados";
 
@@ -26,6 +27,11 @@ export class Buzon {
 
     cantidad(nombre: NombreBandeja): number {
         return this.bandeja(nombre).cantidad();
+    }
+
+    // Búsqueda de texto libre en la Bandeja de Entrada (RF-04).
+    buscar(texto: string): ICorreo[] {
+        return buscarCorreos(this.listar("Entrada"), texto);
     }
 
     // En qué bandeja está el correo, o undefined si no está en el buzón.
@@ -84,7 +90,7 @@ export class Buzon {
             throw new Error(`El correo ${correo.getId()} ya está eliminado`);
         }
 
-        this.bandeja(_actual).quitar(correo);
+        this.bandeja(_actual).quitar(correo); //
         this.bandeja("Eliminados").agregar(correo);
         this._origenes.set(correo.getId(), _actual);
     }
