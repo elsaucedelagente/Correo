@@ -63,4 +63,18 @@ describe("RF-01: creación de correos", () => {
         expect(correo.getLeido()).toBe(false);
         expect(correo.getFavorito()).toBe(false);
     });
+
+    it("conserva sus destinatarios ante modificaciones", () => {
+        const maria = new Contacto("Maria", "maria@gmail.com");
+        const carlos = new Contacto("Carlos", "carlos@gmail.com");
+        const destinatarios = [carlos];
+
+        const correo = new Correo(1, "Consulta", "Primera consulta", maria, destinatarios);
+
+        // Quitamos a Carlos del array externo.
+        destinatarios.pop();
+
+        // Carlos debe seguir siendo destinatario del correo.
+        expect(correo.getDestinatarios()).toEqual([carlos]);
+    });
 });
