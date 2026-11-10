@@ -127,4 +127,12 @@ describe("RF-01: validación para envío", () => {
             "Debe tener al menos un destinatario",
         ]);
     });
+
+    it("puedeEnviarse resume la validación", () => {
+        const _completo = new Correo(1, "Consulta", "Hola", _maria, [_carlos]);
+        const _incompleto = new Correo(2, "", "Hola", _maria, [_carlos]);
+
+        expect(_completo.puedeEnviarse()).toBe(true);
+        expect(_incompleto.puedeEnviarse()).toBe(false);
+    });
 });

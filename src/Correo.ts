@@ -68,6 +68,10 @@ export class Correo implements ICorreo{
         return _errores;
     }
 
+    puedeEnviarse(): boolean {
+        return this.validarParaEnvio().length === 0;
+    }
+
     // Dos contactos con el mismo email son el mismo destinatario,
     // así que solo se agrega si todavía no está en la lista.
     private agregarSinRepetir(destinatario: IContacto): void {
