@@ -55,6 +55,16 @@ export class Correo implements ICorreo{
         return this._favorito;
     }
 
+    // Un borrador puede estar incompleto. Esto devuelve la lista de lo que
+    // le falta para poder enviarse; si está vacía, se puede enviar.
+    validarParaEnvio(): string[] {
+        const _errores: string[] = [];
+        if (this._asunto.trim() === "") {
+            _errores.push("El asunto es obligatorio");
+        }
+        return _errores;
+    }
+
     // Dos contactos con el mismo email son el mismo destinatario,
     // así que solo se agrega si todavía no está en la lista.
     private agregarSinRepetir(destinatario: IContacto): void {

@@ -96,3 +96,20 @@ describe("RF-01: creación de correos", () => {
         expect(_correo.getDestinatarios()).toEqual([_carlos]);
     });
 });
+
+describe("RF-01: validación para envío", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("un correo completo no tiene errores", () => {
+        const _correo = new Correo(1, "Consulta", "Hola", _maria, [_carlos]);
+
+        expect(_correo.validarParaEnvio()).toEqual([]);
+    });
+
+    it("un correo sin asunto no se puede enviar", () => {
+        const _correo = new Correo(1, "   ", "Hola", _maria, [_carlos]);
+
+        expect(_correo.validarParaEnvio()).toEqual(["El asunto es obligatorio"]);
+    });
+});

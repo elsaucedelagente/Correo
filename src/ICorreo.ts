@@ -8,5 +8,6 @@ export interface ICorreo {
   getDestinatarios(): readonly IContacto[];
   getLeido(): boolean;
   getFavorito(): boolean;
+  validarParaEnvio(): string[];
 
 }
