@@ -220,3 +220,96 @@ describe("RF-06: eliminar correos", () => {
         expect(_borrador.estaEnviado()).toBe(false);
     });
 });
+
+describe("RF-06: restaurar correos", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("un correo restaurado vuelve a su bandeja de origen", () => {
+        const _buzon = new Buzon();
+        const _recibido = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        const _enviado = new Correo(2, "Hola", "Texto", _maria, [_carlos]);
+        const _borrador = new Correo(3, "", "", _maria, []);
+        _buzon.recibir(_recibido);
+        _buzon.enviar(_enviado);
+        _buzon.guardarBorrador(_borrador);
+        _buzon.eliminar(_recibido);
+        _buzon.eliminar(_enviado);
+        _buzon.eliminar(_borrador);
+
+        _buzon.restaurar(_recibido);
+        _buzon.restaurar(_enviado);
+        _buzon.restaurar(_borrador);
+
+        expect(_buzon.ubicacion(_recibido)).toBe("Entrada");
+        expect(_buzon.ubicacion(_enviado)).toBe("Enviados");
+        expect(_buzon.ubicacion(_borrador)).toBe("Borradores");
+        expect(_buzon.cantidad("Eliminados")).toBe(0);
+    });
+
+    it("restaurar no genera duplicados", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+        _buzon.eliminar(_correo);
+
+        _buzon.restaurar(_correo);
+
+        expect(_buzon.listar("Entrada")).toEqual([_correo]);
+        expect(_buzon.listar("Eliminados")).toEqual([]);
+    });
+
+    it("después de restaurar, el correo ya no tiene origen guardado", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+        _buzon.eliminar(_correo);
+
+        _buzon.restaurar(_correo);
+
+        expect(_buzon.origen(_correo)).toBeUndefined();
+    });
+
+    it("no se puede restaurar un correo que no está eliminado", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+
+        expect(() => _buzon.restaurar(_correo)).toThrow("no está en Eliminados");
+        expect(_buzon.ubicacion(_correo)).toBe("Entrada");
+    });
+
+    it("no se puede restaurar un correo que no está en el buzón", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+
+        expect(() => _buzon.restaurar(_correo)).toThrow("no está en Eliminados");
+    });
+
+    it("un borrador restaurado se puede seguir editando y enviar", () => {
+        const _buzon = new Buzon();
+        const _borrador = new Correo(1, "", "", _maria, []);
+        _buzon.guardarBorrador(_borrador);
+        _buzon.eliminar(_borrador);
+        _buzon.restaurar(_borrador);
+
+        _borrador.setAsunto("Hola");
+        _borrador.agregarDestinatario(_carlos);
+        _buzon.enviar(_borrador);
+
+        expect(_buzon.ubicacion(_borrador)).toBe("Enviados");
+    });
+
+    it("un correo se puede eliminar de nuevo después de restaurarlo", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+        _buzon.eliminar(_correo);
+        _buzon.restaurar(_correo);
+
+        _buzon.eliminar(_correo);
+
+        expect(_buzon.ubicacion(_correo)).toBe("Eliminados");
+        expect(_buzon.origen(_correo)).toBe("Entrada");
+    });
+});

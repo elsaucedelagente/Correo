@@ -89,6 +89,18 @@ export class Buzon {
         this._origenes.set(correo.getId(), _actual);
     }
 
+    // Devuelve un correo eliminado a la bandeja de la que vino.
+    restaurar(correo: ICorreo): void {
+        const _origen = this.origen(correo);
+        if (this.ubicacion(correo) !== "Eliminados" || _origen === undefined) {
+            throw new Error(`El correo ${correo.getId()} no está en Eliminados`);
+        }
+
+        this.bandeja("Eliminados").quitar(correo);
+        this.bandeja(_origen).agregar(correo);
+        this._origenes.delete(correo.getId());
+    }
+
     // Bandeja de la que vino un correo eliminado, o undefined si no está eliminado.
     origen(correo: ICorreo): NombreBandeja | undefined {
         return this._origenes.get(correo.getId());
