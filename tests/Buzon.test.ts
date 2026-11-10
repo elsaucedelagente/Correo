@@ -62,3 +62,90 @@ describe("Buzón: bandejas y borradores", () => {
         expect(_buzon.ubicacion(_correo)).toBeUndefined();
     });
 });
+
+describe("RF-02: envío de correos", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+    const _ana = new Contacto("Ana", "ana@gmail.com");
+
+    it("un correo enviado queda en Enviados", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _maria, [_carlos]);
+
+        _buzon.enviar(_correo);
+
+        expect(_buzon.listar("Enviados")).toEqual([_correo]);
+        expect(_correo.estaEnviado()).toBe(true);
+    });
+
+    it("un correo se puede enviar a varios destinatarios", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _maria, [_carlos, _ana]);
+
+        _buzon.enviar(_correo);
+
+        expect(_buzon.listar("Enviados")).toEqual([_correo]);
+        expect(_correo.getDestinatarios()).toEqual([_carlos, _ana]);
+    });
+
+    it("un borrador enviado deja de estar en Borradores", () => {
+        const _buzon = new Buzon();
+        const _borrador = new Correo(1, "", "", _maria, []);
+        _buzon.guardarBorrador(_borrador);
+
+        _borrador.setAsunto("Hola");
+        _borrador.agregarDestinatario(_carlos);
+        _buzon.enviar(_borrador);
+
+        expect(_buzon.cantidad("Borradores")).toBe(0);
+        expect(_buzon.listar("Enviados")).toEqual([_borrador]);
+        expect(_buzon.ubicacion(_borrador)).toBe("Enviados");
+    });
+
+    it("no se puede enviar un correo sin asunto", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "  ", "Texto", _maria, [_carlos]);
+
+        expect(() => _buzon.enviar(_correo)).toThrow("El asunto es obligatorio");
+        expect(_buzon.cantidad("Enviados")).toBe(0);
+    });
+
+    it("no se puede enviar un correo sin destinatarios", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _maria, []);
+
+        expect(() => _buzon.enviar(_correo)).toThrow("Debe tener al menos un destinatario");
+        expect(_buzon.cantidad("Enviados")).toBe(0);
+    });
+
+    it("un borrador inválido no se envía y sigue en Borradores", () => {
+        const _buzon = new Buzon();
+        const _borrador = new Correo(1, "", "", _maria, []);
+        _buzon.guardarBorrador(_borrador);
+
+        expect(() => _buzon.enviar(_borrador)).toThrow("No se puede enviar");
+
+        expect(_buzon.listar("Borradores")).toEqual([_borrador]);
+        expect(_buzon.cantidad("Enviados")).toBe(0);
+        expect(_borrador.estaEnviado()).toBe(false);
+    });
+
+    it("enviar dos veces el mismo correo no genera duplicados", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _maria, [_carlos]);
+        _buzon.enviar(_correo);
+
+        expect(() => _buzon.enviar(_correo)).toThrow("ya fue enviado");
+        expect(_buzon.cantidad("Enviados")).toBe(1);
+    });
+
+    it("no se puede enviar un correo que está en Entrada", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+
+        expect(() => _buzon.enviar(_correo)).toThrow('No se puede enviar un correo de la bandeja "Entrada"');
+        expect(_buzon.ubicacion(_correo)).toBe("Entrada");
+        expect(_correo.estaEnviado()).toBe(false);
+    });
+});

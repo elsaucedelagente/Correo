@@ -51,6 +51,26 @@ export class Buzon {
         this.bandeja("Borradores").agregar(correo);
     }
 
+    // Envío simulado (RF-02). Se puede enviar un correo nuevo o un borrador.
+    // marcarComoEnviado valida remitente, asunto y destinatarios, y falla si
+    // ya se envió; como se llama antes de mover nada, si falla el buzón queda igual.
+    enviar(correo: ICorreo): void {
+        const _actual = this.ubicacion(correo);
+        if (_actual === "Enviados") {
+            throw new Error(`El correo ${correo.getId()} ya fue enviado`);
+        }
+        if (_actual !== undefined && _actual !== "Borradores") {
+            throw new Error(`No se puede enviar un correo de la bandeja "${_actual}"`);
+        }
+
+        correo.marcarComoEnviado();
+
+        if (_actual === "Borradores") {
+            this.bandeja("Borradores").quitar(correo);
+        }
+        this.bandeja("Enviados").agregar(correo);
+    }
+
     private bandeja(nombre: NombreBandeja): Bandeja {
         return this._bandejas.get(nombre)!;
     }
