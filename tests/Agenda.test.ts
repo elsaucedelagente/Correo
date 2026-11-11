@@ -9,8 +9,8 @@ describe('Agenda', () => {
 
   beforeEach(() => {
     agenda = new Agenda();
-    contacto1 = new Contacto('Juan Pérez', 'juan.perez@example.com');
-    contacto2 = new Contacto('Ana Gómez', 'ana.gomez@example.com');
+    contacto1 = new Contacto('Juan Pérez', 'juan.perez@gmail.com');
+    contacto2 = new Contacto('Ana Gómez', 'ana.gomez@gmail.com');
   });
 
   it('debe iniciar vacía', () => {
@@ -29,7 +29,7 @@ describe('Agenda', () => {
     agenda.agregar(contacto1);
     
     // Creamos otro contacto con el mismo email pero distintas mayúsculas
-    const contactoDuplicado = new Contacto('Juan Modificado', 'JUAN.PEREZ@example.com');
+    const contactoDuplicado = new Contacto('Juan Modificado', 'JUAN.PEREZ@gmail.com');
 
     expect(() => agenda.agregar(contactoDuplicado)).toThrowError(
       /Ya existe un contacto con el email/i
@@ -40,14 +40,14 @@ describe('Agenda', () => {
   it('debe permitir consultar un contacto existente (normalizando el email)', () => {
     agenda.agregar(contacto1);
 
-    const encontrado = agenda.consultar('  JUAN.Perez@Example.com  ');
+    const encontrado = agenda.consultar('  JUAN.Perez@gmail.com  ');
     
     expect(encontrado).toBeDefined();
     expect(encontrado?.getNombreCompleto()).toBe('Juan Pérez');
   });
 
   it('debe retornar undefined al consultar un correo que no existe', () => {
-    const encontrado = agenda.consultar('noexiste@example.com');
+    const encontrado = agenda.consultar('noexiste@gmail.com');
     expect(encontrado).toBeUndefined();
   });
 
@@ -65,20 +65,20 @@ describe('Agenda', () => {
   it('debe permitir modificar los datos de un contacto existente', () => {
     agenda.agregar(contacto1);
 
-    const modificado = agenda.modificar('juan.perez@example.com', {
+    const modificado = agenda.modificar('juan.perez@gmail.com', {
       nombreCompleto: 'Juan Carlos Pérez',
-      email: 'nuevo.juan@example.com'
+      email: 'nuevo.juan@gmail.com'
     });
 
     expect(modificado.getNombreCompleto()).toBe('Juan Carlos Pérez');
-    expect(modificado.getEmail()).toBe('nuevo.juan@example.com');
-    expect(agenda.consultar('juan.perez@example.com')).toBeUndefined();
-    expect(agenda.consultar('nuevo.juan@example.com')).toBeDefined();
+    expect(modificado.getEmail()).toBe('nuevo.juan@gmail.com');
+    expect(agenda.consultar('juan.perez@gmail.com')).toBeUndefined();
+    expect(agenda.consultar('nuevo.juan@gmail.com')).toBeDefined();
   });
 
   it('debe lanzar un error al intentar modificar un contacto que no existe', () => {
     expect(() => {
-      agenda.modificar('fantasma@example.com', { nombreCompleto: 'Otro' });
+      agenda.modificar('fantasma@gmail.com', { nombreCompleto: 'Otro' });
     }).toThrowError(/No existe un contacto con el email/i);
   });
 
@@ -87,16 +87,16 @@ describe('Agenda', () => {
     agenda.agregar(contacto2);
     expect(agenda.cantidad()).toBe(2);
 
-    agenda.eliminar('juan.perez@example.com');
+    agenda.eliminar('juan.perez@gmail.com');
 
     expect(agenda.cantidad()).toBe(1);
-    expect(agenda.consultar('juan.perez@example.com')).toBeUndefined();
+    expect(agenda.consultar('juan.perez@gmail.com')).toBeUndefined();
     expect(agenda.listar()).toContain(contacto2);
   });
 
   it('debe lanzar un error al intentar eliminar un correo inexistente', () => {
     expect(() => {
-      agenda.eliminar('noexiste@example.com');
+      agenda.eliminar('noexiste@gmail.com');
     }).toThrowError(/No existe un contacto con el email/i);
   });
 });

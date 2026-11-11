@@ -84,3 +84,41 @@ describe("Filtro (RF-05)", () => {
             expect(_filtro.aplicar([_asado, _tp])).toEqual([]);
             expect(_filtro.aplicar([_tp, _examen])).toEqual([_examen]);
         });
+          it("un mismo filtro se puede reutilizar en consultas distintas con el mismo resultado", () => {
+            const { _todos } = _crearCorreos();
+            const _filtro = new Filtro("UCP", _deLaUCP);
+
+            expect(_filtro.aplicar(_todos)).toEqual(_filtro.aplicar(_todos));
+        });
+    });
+
+    describe("no almacena ni modifica correos", () => {
+        it("aplicar devuelve un array nuevo y deja intacta la colección original", () => {
+            const { _todos } = _crearCorreos();
+            const _copia = [..._todos];
+            const _filtro = new Filtro("UCP", _deLaUCP);
+
+            const _resultado = _filtro.aplicar(_todos);
+
+            expect(_resultado).not.toBe(_todos);
+            expect(_todos).toEqual(_copia);
+        });
+
+        it("no modifica los correos originales", () => {
+            const { _examen, _todos } = _crearCorreos();
+
+            new Filtro("UCP", _deLaUCP).aplicar(_todos);
+
+            expect(_examen.getAsunto()).toBe("Examen final");
+            expect(_examen.getContenido()).toBe("Fecha del examen");
+            expect(_examen.getRemitente()).toBe(_docente);
+            expect(_examen.getDestinatarios()).toEqual([_ana]);
+        });
+
+        it("modificar el resultado no afecta a la colección original", () => {
+            const { _todos } = _crearCorreos();
+
+            new Filtro("Todos", () => true).aplicar(_todos).pop();
+
+            expect(_todos).toHaveLength(3);
+        });
