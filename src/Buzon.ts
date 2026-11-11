@@ -1,4 +1,6 @@
 import {ICorreo} from "./ICorreo";
+import {IContacto} from "./IContacto";
+import {Correo} from "./Correo";
 import {Bandeja} from "./Bandeja";
 import {buscarCorreos} from "./Busqueda";
 
@@ -57,6 +59,13 @@ export class Buzon {
         }
         this.verificarQueNoEsteEnElBuzon(correo);
         this.bandeja("Borradores").agregar(correo);
+    }
+
+    // Crea un borrador nuevo, con id único, y lo deja en Borradores (RF-07).
+    redactar(remitente: IContacto, asunto: string, contenido: string, destinatarios: IContacto[]): Correo {
+        const _borrador = Correo.crear(asunto, contenido, remitente, destinatarios);
+        this.guardarBorrador(_borrador);
+        return _borrador;
     }
 
     // Envío simulado (RF-02). Se puede enviar un correo nuevo o un borrador.

@@ -61,6 +61,16 @@ describe("Buzón: bandejas y borradores", () => {
 
         expect(_buzon.ubicacion(_correo)).toBeUndefined();
     });
+
+    it("redactar crea borradores con ids distintos en Borradores", () => {
+        const _buzon = new Buzon();
+
+        const _borrador1 = _buzon.redactar(_maria, "", "", []);
+        const _borrador2 = _buzon.redactar(_maria, "Consulta", "Hola", [_carlos]);
+
+        expect(_borrador1.getId()).not.toBe(_borrador2.getId());
+        expect(_buzon.listar("Borradores")).toEqual([_borrador1, _borrador2]);
+    });
 });
 
 describe("RF-02: envío de correos", () => {
