@@ -43,3 +43,44 @@ describe("Filtro (RF-05)", () => {
             expect(() => new Filtro("   ", _deLaUCP)).toThrow();
         });
     });
+     describe("evaluación de un correo", () => {
+        it("cumple devuelve true si el correo cumple la condición", () => {
+            const { _examen } = _crearCorreos();
+
+            expect(new Filtro("UCP", _deLaUCP).cumple(_examen)).toBe(true);
+        });
+
+        it("cumple devuelve false si el correo no cumple la condición", () => {
+            const { _asado } = _crearCorreos();
+
+            expect(new Filtro("UCP", _deLaUCP).cumple(_asado)).toBe(false);
+        });
+    });
+
+    describe("aplicar sobre una colección", () => {
+        it("devuelve solo los correos que cumplen, en el mismo orden", () => {
+            const { _examen, _tp, _todos } = _crearCorreos();
+            const _filtro = new Filtro("Con T", _asuntoContiene("e"));
+
+            expect(_filtro.aplicar(_todos)).toEqual([_examen, _tp]);
+        });
+
+        it("devuelve una colección vacía si ninguno cumple", () => {
+            const { _todos } = _crearCorreos();
+            const _filtro = new Filtro("Inexistente", _asuntoContiene("zzzz"));
+
+            expect(_filtro.aplicar(_todos)).toEqual([]);
+        });
+
+        it("devuelve una colección vacía si la colección está vacía", () => {
+            expect(new Filtro("UCP", _deLaUCP).aplicar([])).toEqual([]);
+        });
+
+        it("un mismo filtro se puede aplicar sobre distintas colecciones", () => {
+            const { _examen, _asado, _tp } = _crearCorreos();
+            const _filtro = new Filtro("UCP", _deLaUCP);
+
+            expect(_filtro.aplicar([_examen, _asado])).toEqual([_examen]);
+            expect(_filtro.aplicar([_asado, _tp])).toEqual([]);
+            expect(_filtro.aplicar([_tp, _examen])).toEqual([_examen]);
+        });
