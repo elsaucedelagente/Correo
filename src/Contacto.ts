@@ -1,9 +1,7 @@
 import { IContacto } from './IContacto';
 
 // Función auxiliar: decide si un texto tiene formato de email válido.
-// No es parte de la clase; es una función suelta que solo se usa acá
 function esEmailValido(email: string): boolean {
-  // [...email] convierte el texto en una lista de caracteres sueltos.
   // .some(...) pregunta: "¿el caracter cumple esta condición?".
   // tieneEspacios es true si el email tiene algún espacio en cualquier parte.
   const tieneEspacios = [...email].some((caracter) => caracter.trim() === '');
@@ -18,7 +16,7 @@ function esEmailValido(email: string): boolean {
   // guardamos la primera parte en "local" (antes de la @)
   // y la segunda en "dominio" (después de la @).
   const [local, dominio] = partes;
-  // La parte de antes de la arroba no puede estar vacía ("@ucp.com" es inválido).
+  // La parte de antes de la arroba no puede estar vacía ej: ("@ucp.com" es inválido).
   if (local.length === 0) return false;
 
   // Cortamos el dominio por los puntos.
@@ -85,12 +83,11 @@ export class Contacto implements IContacto {
   }
  
   // Dice si el texto buscado aparece en el nombre o en el email.
-  // Se va a usar en la búsqueda de correos (RF-04), para revisar remitente y destinatarios.
+  // Se usa en la búsqueda de correos (RF-04), para revisar remitente y destinatarios.
   coincideCon(texto: string): boolean {
     // Pasamos lo buscado a minúsculas para no distinguir mayúsculas de minúsculas.
     const t = texto.toLowerCase();
-    // includes(t) es true si el texto aparece en cualquier parte (coincidencia parcial).
-    // "||" significa "o": alcanza con que coincida el nombre O el email.
+    // includes(t) es true si el texto aparece en cualquier parte.
     // El email ya está guardado en minúsculas, por eso no hace falta convertirlo de nuevo.
     return (
       this._nombreCompleto.toLowerCase().includes(t) ||

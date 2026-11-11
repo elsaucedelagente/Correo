@@ -122,3 +122,43 @@ describe("Filtro (RF-05)", () => {
 
             expect(_todos).toHaveLength(3);
         });
+          it("los cambios en los correos se reflejan sin volver a guardarlos en el filtro", () => {
+            const { _asado, _todos } = _crearCorreos();
+            const _filtro = new Filtro("Exámenes", _asuntoContiene("examen"));
+            expect(_filtro.aplicar(_todos)).not.toContain(_asado);
+
+            _asado.setAsunto("Examen de recuperatorio");
+
+            expect(_filtro.aplicar(_todos)).toContain(_asado);
+        });
+    });
+
+    describe("reutilización de predicados", () => {
+        it("se puede construir un filtro nuevo combinando predicados existentes", () => {
+            const { _examen, _todos } = _crearCorreos();
+            const _filtro = new Filtro("Académicos", and(_deLaUCP, _asuntoContiene("examen")));
+
+            expect(_filtro.aplicar(_todos)).toEqual([_examen]);
+        });
+
+        it("se puede reutilizar el predicado de otro filtro para armar uno nuevo", () => {
+            const { _examen, _todos } = _crearCorreos();
+            const _base = new Filtro("UCP", _deLaUCP);
+            const _nuevo = new Filtro(
+                "UCP sin Entrega",
+                and(_base.getPredicado(), not(_asuntoContiene("entrega")))
+            );
+
+            expect(_nuevo.aplicar(_todos)).toEqual([_examen]);
+        });
+
+        it("el filtro base no cambia al reutilizar su predicado", () => {
+            const { _examen, _todos } = _crearCorreos();
+            const _base = new Filtro("UCP", _deLaUCP);
+
+            new Filtro("Otro", and(_base.getPredicado(), _asuntoContiene("zzzz")));
+
+            expect(_base.aplicar(_todos)).toEqual([_examen]);
+        });
+    });
+});
