@@ -95,6 +95,17 @@ describe("RF-01: creación de correos", () => {
 
         expect(_correo.getDestinatarios()).toEqual([_carlos]);
     });
+
+    it("crear genera ids distintos y que no chocan con los ya usados", () => {
+        const _maria = new Contacto("Maria", "maria@gmail.com");
+        const _manual = new Correo(500, "Manual", "Hola", _maria, []);
+
+        const _correo1 = Correo.crear("Uno", "Hola", _maria, []);
+        const _correo2 = Correo.crear("Dos", "Hola", _maria, []);
+
+        expect(_correo1.getId()).toBeGreaterThan(_manual.getId());
+        expect(_correo2.getId()).not.toBe(_correo1.getId());
+    });
 });
 
 describe("RF-01: validación para envío", () => {

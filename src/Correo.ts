@@ -2,6 +2,9 @@ import {ICorreo} from "./ICorreo";
 import {IContacto} from "./IContacto";
 
 export class Correo implements ICorreo{
+    // Mayor id usado hasta ahora, compartido por todos los correos.
+    private static _ultimoId = 0;
+
     private readonly _id: number;
     private _asunto: string;
     private _contenido: string;
@@ -16,6 +19,7 @@ export class Correo implements ICorreo{
             throw new Error("El remitente es obligatorio");
         }
         this._id = id;
+        Correo._ultimoId = Math.max(Correo._ultimoId, id);
         this._asunto = asunto;
         this._contenido = contenido;
         this._remitente = remitente;
@@ -26,6 +30,11 @@ export class Correo implements ICorreo{
         this._leido = false;
         this._favorito = false;
         this._enviado = false;
+    }
+
+    // Crea un correo con un id nuevo, mayor a todos los usados (RF-01).
+    static crear(asunto: string, contenido: string, remitente: IContacto, destinatarios: IContacto[]): Correo {
+        return new Correo(Correo._ultimoId + 1, asunto, contenido, remitente, destinatarios);
     }
 
     getId(): number{
