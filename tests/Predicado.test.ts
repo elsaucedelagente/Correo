@@ -11,3 +11,19 @@ describe("Predicados: combinadores AND / OR / NOT", () => {
         it("exige que se cumplan todos los predicados", () => {
             expect(_numeros.filter(and(_esPar, _mayorA10))).toEqual([12]);
         });
+        it("con un solo predicado se comporta como ese predicado", () => {
+            expect(_numeros.filter(and(_esPar))).toEqual([4, 12]);
+        });
+
+        it("sin predicados acepta todo", () => {
+            expect(_numeros.filter(and())).toEqual(_numeros);
+        });
+
+        it("deja de evaluar en cuanto un predicado falla", () => {
+            const _segundo = vi.fn(() => true);
+
+            and<number>(() => false, _segundo)(1);
+
+            expect(_segundo).not.toHaveBeenCalled();
+        });
+    });
