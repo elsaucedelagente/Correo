@@ -65,6 +65,16 @@ export class Correo implements ICorreo{
     getFavorito(): boolean{
         return this._favorito;
     }
+    
+    // RF-08: estado de lectura. Cambiarlo no es editar el correo, por eso
+    // también se puede hacer en un correo ya enviado.
+    marcarComoLeido(): void {
+        this._leido = true;
+    }
+
+    marcarComoNoLeido(): void {
+        this._leido = false;
+    }
 
     // Un borrador puede estar incompleto. Esto devuelve la lista de lo que
     // le falta para poder enviarse; si está vacía, se puede enviar.
