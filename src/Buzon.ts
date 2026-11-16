@@ -3,6 +3,7 @@ import {IContacto} from "./IContacto";
 import {Correo} from "./Correo";
 import {Bandeja} from "./Bandeja";
 import {buscarCorreos} from "./Busqueda";
+import {noLeido} from "./predicadosCorreo";
 
 export type NombreBandeja = "Entrada" | "Enviados" | "Borradores" | "Eliminados";
 
@@ -36,6 +37,12 @@ export class Buzon {
         return buscarCorreos(this.listar("Entrada"), texto);
     }
 
+// RF-08: correos no leídos de una bandeja. Filtra en el momento de la
+    // consulta, así el resultado siempre refleja el estado actual de cada correo.
+    noLeidos(nombre: NombreBandeja): ICorreo[] {
+        return this.listar(nombre).filter(noLeido);
+    }
+    
     // En qué bandeja está el correo, o undefined si no está en el buzón.
     ubicacion(correo: ICorreo): NombreBandeja | undefined {
         for (const [_nombre, _bandeja] of this._bandejas) {
