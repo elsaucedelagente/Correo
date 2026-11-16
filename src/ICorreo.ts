@@ -8,6 +8,9 @@ export interface ICorreo {
   getDestinatarios(): readonly IContacto[];
   getLeido(): boolean;
   getFavorito(): boolean;
+  // RF-08: estado de lectura
+  marcarComoLeido(): void;
+  marcarComoNoLeido(): void;
   validarParaEnvio(): string[];
   puedeEnviarse(): boolean;
   estaEnviado(): boolean;
