@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import { Buzon } from "../src/Buzon";
 import { Contacto } from "../src/Contacto";
 import { Correo } from "../src/Correo";
+import { and } from "../src/Predicados";
+import { asuntoContiene, noLeido } from "../src/predicadosCorreo";
 
 describe("Buzón: bandejas y borradores", () => {
     const _maria = new Contacto("Maria", "maria@gmail.com");
@@ -477,5 +479,59 @@ describe("RF-10: procesamiento funcional de una bandeja", () => {
         const _buzon = new Buzon();
 
         expect(_buzon.resumen("Eliminados")).toEqual({ total: 0, leidos: 0, noLeidos: 0 });
+    });
+});
+
+describe("RF-09: correos favoritos", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("reúne favoritos de distintas bandejas sin moverlos ni repetirlos", () => {
+        const _buzon = new Buzon();
+        const _entrada = new Correo(1, "Entrada", "Texto", _carlos, [_maria]);
+        const _enviado = new Correo(2, "Enviado", "Texto", _maria, [_carlos]);
+        const _borrador = new Correo(3, "Borrador", "Texto", _maria, []);
+        _buzon.recibir(_entrada);
+        _buzon.enviar(_enviado);
+        _buzon.guardarBorrador(_borrador);
+
+        _entrada.marcarComoFavorito();
+        _enviado.marcarComoFavorito();
+        _borrador.marcarComoFavorito();
+
+        expect(_buzon.favoritos()).toEqual([_entrada, _enviado, _borrador]);
+        expect(_buzon.ubicacion(_entrada)).toBe("Entrada");
+        expect(_buzon.ubicacion(_enviado)).toBe("Enviados");
+        expect(_buzon.ubicacion(_borrador)).toBe("Borradores");
+    });
+
+    it("combina condiciones para buscar dentro de los favoritos", () => {
+        const _buzon = new Buzon();
+        const _coincide = new Correo(1, "Proyecto urgente", "Texto", _carlos, [_maria]);
+        const _leido = new Correo(2, "Proyecto leído", "Texto", _carlos, [_maria]);
+        const _noFavorito = new Correo(3, "Proyecto urgente", "Texto", _carlos, [_maria]);
+        [_coincide, _leido, _noFavorito].forEach((correo) => _buzon.recibir(correo));
+        _coincide.marcarComoFavorito();
+        _leido.marcarComoFavorito();
+        _noFavorito.marcarComoLeido();
+        _leido.marcarComoLeido();
+
+        expect(_buzon.favoritos(and(asuntoContiene("Proyecto"), noLeido))).toEqual([_coincide]);
+    });
+
+    it("oculta eliminados y conserva su favorito al restaurarlos", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Importante", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+        _correo.marcarComoFavorito();
+        _buzon.eliminar(_correo);
+
+        expect(_buzon.favoritos()).toEqual([]);
+        expect(_buzon.listar("Eliminados")).toEqual([_correo]);
+
+        _buzon.restaurar(_correo);
+
+        expect(_correo.getFavorito()).toBe(true);
+        expect(_buzon.favoritos()).toEqual([_correo]);
     });
 });

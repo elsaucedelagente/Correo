@@ -49,6 +49,16 @@ describe("RF-01: creación de correos", () => {
         expect(correo.getFavorito()).toBe(false);
     });
 
+    it("permite marcar y desmarcar un correo como favorito", () => {
+        const correo = new Correo(1, "Hola", "Texto", new Contacto("Ana", "ana@gmail.com"), []);
+
+        correo.marcarComoFavorito();
+        expect(correo.getFavorito()).toBe(true);
+
+        correo.desmarcarComoFavorito();
+        expect(correo.getFavorito()).toBe(false);
+    });
+
     it("conserva la información recibida y los estados iniciales", () => {
         const maria = new Contacto("Maria", "maria@gmail.com");
         const carlos = new Contacto("Carlos", "carlos@gmail.com");
