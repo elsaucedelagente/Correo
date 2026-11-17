@@ -523,13 +523,16 @@ describe("RF-09: correos favoritos", () => {
         const _coincide = new Correo(1, "Proyecto urgente", "Texto", _carlos, [_maria]);
         const _leido = new Correo(2, "Proyecto leído", "Texto", _carlos, [_maria]);
         const _noFavorito = new Correo(3, "Proyecto urgente", "Texto", _carlos, [_maria]);
+        const _enviado = new Correo(4, "Proyecto abierto", "Texto", _maria, [_carlos]);
         [_coincide, _leido, _noFavorito].forEach((correo) => _buzon.recibir(correo));
+        _buzon.enviar(_enviado);
         _coincide.marcarComoFavorito();
         _leido.marcarComoFavorito();
+        _enviado.marcarComoFavorito();
         _noFavorito.marcarComoLeido();
         _leido.marcarComoLeido();
 
-        expect(_buzon.favoritos(and(asuntoContiene("Proyecto"), noLeido))).toEqual([_coincide]);
+        expect(_buzon.favoritos(and(asuntoContiene("Proyecto"), noLeido))).toEqual([_coincide, _enviado]);
     });
 
     it("oculta eliminados y conserva su favorito al restaurarlos", () => {
