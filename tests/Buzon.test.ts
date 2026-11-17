@@ -415,3 +415,67 @@ describe("RF-08: correos no leídos de una bandeja", () => {
         expect(_buzon.noLeidos("Entrada")).toEqual([_sinLeer]);
     });
 });
+describe("RF-10: procesamiento funcional de una bandeja", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("obtiene la lista de asuntos de una bandeja", () => {
+        const _buzon = new Buzon();
+        _buzon.recibir(new Correo(1, "Uno", "Texto", _carlos, [_maria]));
+        _buzon.recibir(new Correo(2, "Dos", "Texto", _carlos, [_maria]));
+
+        expect(_buzon.asuntos("Entrada")).toEqual(["Uno", "Dos"]);
+    });
+
+    it("los asuntos de una bandeja vacía son una colección vacía", () => {
+        const _buzon = new Buzon();
+
+        expect(_buzon.asuntos("Entrada")).toEqual([]);
+    });
+
+    it("los asuntos solo corresponden a la bandeja pedida", () => {
+        const _buzon = new Buzon();
+        _buzon.recibir(new Correo(1, "Recibido", "Texto", _carlos, [_maria]));
+        _buzon.enviar(new Correo(2, "Enviado", "Texto", _maria, [_carlos]));
+
+        expect(_buzon.asuntos("Entrada")).toEqual(["Recibido"]);
+        expect(_buzon.asuntos("Enviados")).toEqual(["Enviado"]);
+    });
+
+    it("filtra los correos de una bandeja que cumplen una condición", () => {
+        const _buzon = new Buzon();
+        const _reunion = new Correo(1, "Reunión", "Texto", _carlos, [_maria]);
+        const _asado = new Correo(2, "Asado", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_reunion);
+        _buzon.recibir(_asado);
+
+        expect(_buzon.filtrar("Entrada", (c) => c.getAsunto() === "Reunión")).toEqual([_reunion]);
+    });
+
+    it("filtrar no modifica la bandeja", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+
+        _buzon.filtrar("Entrada", () => true).pop();
+
+        expect(_buzon.listar("Entrada")).toEqual([_correo]);
+    });
+
+    it("resume una bandeja con total, leídos y no leídos", () => {
+        const _buzon = new Buzon();
+        const _uno = new Correo(1, "Uno", "Texto", _carlos, [_maria]);
+        const _dos = new Correo(2, "Dos", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_uno);
+        _buzon.recibir(_dos);
+        _uno.marcarComoLeido();
+
+        expect(_buzon.resumen("Entrada")).toEqual({ total: 2, leidos: 1, noLeidos: 1 });
+    });
+
+    it("el resumen de una bandeja vacía es todo cero", () => {
+        const _buzon = new Buzon();
+
+        expect(_buzon.resumen("Eliminados")).toEqual({ total: 0, leidos: 0, noLeidos: 0 });
+    });
+});
