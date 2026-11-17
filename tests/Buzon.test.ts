@@ -579,3 +579,39 @@ describe("RF-09: correos favoritos", () => {
         expect(_buzon.favoritos()).toEqual([_correo]);
     });
 });
+
+describe("Un correo enviado a varias personas: cada buzón es independiente", () => {
+    const _ana = new Contacto("Ana", "ana@gmail.com");
+    const _beto = new Contacto("Beto", "beto@gmail.com");
+    const _carla = new Contacto("Carla", "carla@gmail.com");
+    const _diego = new Contacto("Diego", "diego@gmail.com");
+
+    it("si un destinatario lo elimina, el remitente y los otros dos lo conservan", () => {
+        // Cada persona tiene su propio buzón.
+        const _buzonAna = new Buzon();
+        const _buzonBeto = new Buzon();
+        const _buzonCarla = new Buzon();
+        const _buzonDiego = new Buzon();
+
+        // Ana envía un correo a Beto, Carla y Diego.
+        const _correo = Correo.crear("Reunión", "Mañana a las 10", _ana, [_beto, _carla, _diego]);
+        _buzonAna.enviar(_correo);
+        _buzonBeto.recibir(_correo);
+        _buzonCarla.recibir(_correo);
+        _buzonDiego.recibir(_correo);
+
+        // Solo Beto lo elimina.
+        _buzonBeto.eliminar(_correo);
+
+        // A Beto le pasa a Eliminados y ya no está en su Entrada.
+        expect(_buzonBeto.ubicacion(_correo)).toBe("Eliminados");
+        expect(_buzonBeto.cantidad("Entrada")).toBe(0);
+
+        // Carla y Diego lo siguen teniendo en Entrada.
+        expect(_buzonCarla.ubicacion(_correo)).toBe("Entrada");
+        expect(_buzonDiego.ubicacion(_correo)).toBe("Entrada");
+
+        // Ana (quien lo envió) lo sigue teniendo en Enviados.
+        expect(_buzonAna.ubicacion(_correo)).toBe("Enviados");
+    });
+});
