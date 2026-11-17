@@ -503,6 +503,9 @@ describe("RF-09: correos favoritos", () => {
         expect(_buzon.ubicacion(_entrada)).toBe("Entrada");
         expect(_buzon.ubicacion(_enviado)).toBe("Enviados");
         expect(_buzon.ubicacion(_borrador)).toBe("Borradores");
+        expect(() => _buzon.recibir(new Correo(1, "Duplicado", "Texto", _carlos, [_maria])))
+            .toThrow("ya está en la bandeja");
+        expect(_buzon.favoritos()).toEqual([_entrada, _enviado, _borrador]);
     });
 
     it("al desmarcar un correo deja de aparecer en favoritos", () => {
@@ -529,7 +532,6 @@ describe("RF-09: correos favoritos", () => {
         _coincide.marcarComoFavorito();
         _leido.marcarComoFavorito();
         _enviado.marcarComoFavorito();
-        _noFavorito.marcarComoLeido();
         _leido.marcarComoLeido();
 
         expect(_buzon.favoritos(and(asuntoContiene("Proyecto"), noLeido))).toEqual([_coincide, _enviado]);
