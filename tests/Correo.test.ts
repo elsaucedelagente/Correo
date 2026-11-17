@@ -208,3 +208,80 @@ describe("RF-07: borradores", () => {
         expect(() => _correo.quitarDestinatario(_carlos)).toThrow("Un correo enviado no se puede modificar");
     });
 });
+describe("RF-08: leído y no leído", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("se puede marcar un correo como leído", () => {
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+
+        _correo.marcarComoLeido();
+
+        expect(_correo.getLeido()).toBe(true);
+    });
+
+    it("se puede volver a marcar como no leído", () => {
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _correo.marcarComoLeido();
+
+        _correo.marcarComoNoLeido();
+
+        expect(_correo.getLeido()).toBe(false);
+    });
+
+    it("el estado se mantiene al consultar el correo varias veces", () => {
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+
+        _correo.marcarComoLeido();
+
+        expect(_correo.getLeido()).toBe(true);
+        expect(_correo.getLeido()).toBe(true);
+    });
+
+    it("marcar dos veces seguidas deja el mismo estado", () => {
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+
+        _correo.marcarComoLeido();
+        _correo.marcarComoLeido();
+        expect(_correo.getLeido()).toBe(true);
+
+        _correo.marcarComoNoLeido();
+        _correo.marcarComoNoLeido();
+        expect(_correo.getLeido()).toBe(false);
+    });
+
+    it("cambiar el estado de lectura no modifica el resto del correo", () => {
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+
+        _correo.marcarComoLeido();
+
+        expect(_correo.getId()).toBe(1);
+        expect(_correo.getAsunto()).toBe("Hola");
+        expect(_correo.getContenido()).toBe("Texto");
+        expect(_correo.getRemitente()).toBe(_carlos);
+        expect(_correo.getDestinatarios()).toEqual([_maria]);
+        expect(_correo.getFavorito()).toBe(false);
+        expect(_correo.estaEnviado()).toBe(false);
+    });
+
+    it("el estado de un correo no afecta al de otros", () => {
+        const _uno = new Correo(1, "Uno", "Texto", _carlos, [_maria]);
+        const _dos = new Correo(2, "Dos", "Texto", _carlos, [_maria]);
+
+        _uno.marcarComoLeido();
+
+        expect(_uno.getLeido()).toBe(true);
+        expect(_dos.getLeido()).toBe(false);
+    });
+
+    it("un correo enviado también se puede marcar como leído y no leído", () => {
+        const _correo = new Correo(1, "Hola", "Texto", _maria, [_carlos]);
+        _correo.marcarComoEnviado();
+
+        expect(() => _correo.marcarComoLeido()).not.toThrow();
+        expect(_correo.getLeido()).toBe(true);
+
+        _correo.marcarComoNoLeido();
+        expect(_correo.getLeido()).toBe(false);
+    });
+});
