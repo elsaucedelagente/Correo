@@ -323,3 +323,95 @@ describe("RF-06: restaurar correos", () => {
         expect(_buzon.origen(_correo)).toBe("Entrada");
     });
 });
+describe("RF-08: correos no leídos de una bandeja", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("devuelve solo los correos no leídos de la bandeja", () => {
+        const _buzon = new Buzon();
+        const _uno = new Correo(1, "Uno", "Texto", _carlos, [_maria]);
+        const _dos = new Correo(2, "Dos", "Texto", _carlos, [_maria]);
+        const _tres = new Correo(3, "Tres", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_uno);
+        _buzon.recibir(_dos);
+        _buzon.recibir(_tres);
+
+        _dos.marcarComoLeido();
+
+        expect(_buzon.noLeidos("Entrada")).toEqual([_uno, _tres]);
+    });
+
+    it("devuelve una colección vacía si todos los correos fueron leídos", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+
+        _correo.marcarComoLeido();
+
+        expect(_buzon.noLeidos("Entrada")).toEqual([]);
+    });
+
+    it("devuelve una colección vacía si la bandeja está vacía", () => {
+        const _buzon = new Buzon();
+
+        expect(_buzon.noLeidos("Entrada")).toEqual([]);
+        expect(_buzon.noLeidos("Eliminados")).toEqual([]);
+    });
+
+    it("el resultado se actualiza al marcar como leído y como no leído", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+        expect(_buzon.noLeidos("Entrada")).toEqual([_correo]);
+
+        _correo.marcarComoLeido();
+        expect(_buzon.noLeidos("Entrada")).toEqual([]);
+
+        _correo.marcarComoNoLeido();
+        expect(_buzon.noLeidos("Entrada")).toEqual([_correo]);
+    });
+
+    it("solo mira la bandeja pedida", () => {
+        const _buzon = new Buzon();
+        const _recibido = new Correo(1, "Recibido", "Texto", _carlos, [_maria]);
+        const _enviado = new Correo(2, "Enviado", "Texto", _maria, [_carlos]);
+        _buzon.recibir(_recibido);
+        _buzon.enviar(_enviado);
+
+        expect(_buzon.noLeidos("Entrada")).toEqual([_recibido]);
+        expect(_buzon.noLeidos("Enviados")).toEqual([_enviado]);
+        expect(_buzon.noLeidos("Borradores")).toEqual([]);
+    });
+
+    it("no modifica la bandeja ni los correos", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+
+        _buzon.noLeidos("Entrada").pop();
+
+        expect(_buzon.listar("Entrada")).toEqual([_correo]);
+        expect(_correo.getLeido()).toBe(false);
+    });
+
+    it("un correo eliminado conserva su estado de lectura y vuelve igual al restaurarlo", () => {
+        const _buzon = new Buzon();
+        const _leido = new Correo(1, "Leído", "Texto", _carlos, [_maria]);
+        const _sinLeer = new Correo(2, "Sin leer", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_leido);
+        _buzon.recibir(_sinLeer);
+        _leido.marcarComoLeido();
+
+        _buzon.eliminar(_leido);
+        _buzon.eliminar(_sinLeer);
+
+        expect(_buzon.noLeidos("Entrada")).toEqual([]);
+        expect(_buzon.noLeidos("Eliminados")).toEqual([_sinLeer]);
+
+        _buzon.restaurar(_leido);
+        _buzon.restaurar(_sinLeer);
+
+        expect(_leido.getLeido()).toBe(true);
+        expect(_buzon.noLeidos("Entrada")).toEqual([_sinLeer]);
+    });
+});
