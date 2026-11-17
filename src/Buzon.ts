@@ -4,6 +4,8 @@ import {Correo} from "./Correo";
 import {Bandeja} from "./Bandeja";
 import {buscarCorreos} from "./Busqueda";
 import {noLeido} from "./predicadosCorreo";
+import {Predicado} from "./Predicados";
+import {listarAsuntos, filtrarCorreos, resumirCorreos, ResumenCorreos} from "./Estadisticas";
 
 export type NombreBandeja = "Entrada" | "Enviados" | "Borradores" | "Eliminados";
 
@@ -43,6 +45,20 @@ export class Buzon {
         return this.listar(nombre).filter(noLeido);
     }
     
+    // RF-10 (map): lista de asuntos de una bandeja.
+    asuntos(nombre: NombreBandeja): string[] {
+        return listarAsuntos(this.listar(nombre));
+    }
+
+    // RF-10 (filter): correos de una bandeja que cumplen una condición.
+    filtrar(nombre: NombreBandeja, condicion: Predicado<ICorreo>): ICorreo[] {
+        return filtrarCorreos(this.listar(nombre), condicion);
+    }
+
+    // RF-10 (reduce): total, leídos y no leídos de una bandeja.
+    resumen(nombre: NombreBandeja): ResumenCorreos {
+        return resumirCorreos(this.listar(nombre));
+    }
     // En qué bandeja está el correo, o undefined si no está en el buzón.
     ubicacion(correo: ICorreo): NombreBandeja | undefined {
         for (const [_nombre, _bandeja] of this._bandejas) {
