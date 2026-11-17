@@ -104,3 +104,27 @@ describe("RF-04: búsqueda en la Bandeja de Entrada", () => {
         expect(_buzon.listar("Entrada")).toEqual([_correo]);
     });
 });
+
+describe("RF-04: búsqueda sobre muchos correos", () => {
+    const _maria = new Contacto("Maria", "maria@gmail.com");
+    const _carlos = new Contacto("Carlos", "carlos@gmail.com");
+
+    it("al buscar '5' entre 100 correos salen todos los que tienen un 5 en el asunto", () => {
+        // Creamos 100 correos con asuntos "Correo 1" hasta "Correo 100".
+        const _correos: Correo[] = [];
+        for (let i = 1; i <= 100; i++) {
+            _correos.push(new Correo(i, `Correo ${i}`, "Texto", _maria, [_carlos]));
+        }
+
+        const _resultado = buscarCorreos(_correos, "5");
+
+        // Los números del 1 al 100 que tienen un 5 son 19: 5, 15, 25, 35, 45,
+        // del 50 al 59, 65, 75, 85 y 95.
+        const _esperados = _correos.filter((_c) => _c.getAsunto().includes("5"));
+        expect(_resultado).toHaveLength(19);
+        expect(_resultado).toEqual(_esperados);
+        expect(_resultado.map((_c) => _c.getId())).toEqual(
+            [5, 15, 25, 35, 45, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 65, 75, 85, 95]
+        );
+    });
+});
