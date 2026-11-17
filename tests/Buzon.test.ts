@@ -505,6 +505,19 @@ describe("RF-09: correos favoritos", () => {
         expect(_buzon.ubicacion(_borrador)).toBe("Borradores");
     });
 
+    it("al desmarcar un correo deja de aparecer en favoritos", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Importante", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+        _correo.marcarComoFavorito();
+        expect(_buzon.favoritos()).toEqual([_correo]);
+
+        _correo.desmarcarComoFavorito();
+
+        expect(_buzon.favoritos()).toEqual([]);
+        expect(_buzon.ubicacion(_correo)).toBe("Entrada");
+    });
+
     it("combina condiciones para buscar dentro de los favoritos", () => {
         const _buzon = new Buzon();
         const _coincide = new Correo(1, "Proyecto urgente", "Texto", _carlos, [_maria]);
