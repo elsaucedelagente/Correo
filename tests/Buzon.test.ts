@@ -486,6 +486,18 @@ describe("RF-09: correos favoritos", () => {
     const _maria = new Contacto("Maria", "maria@gmail.com");
     const _carlos = new Contacto("Carlos", "carlos@gmail.com");
 
+    it("devuelve una lista vacía al inicio y una copia de la colección", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Hola", "Texto", _carlos, [_maria]);
+        _buzon.recibir(_correo);
+
+        expect(_buzon.favoritos()).toEqual([]);
+        _correo.marcarComoFavorito();
+        _buzon.favoritos().pop();
+
+        expect(_buzon.favoritos()).toEqual([_correo]);
+    });
+
     it("reúne favoritos de distintas bandejas sin moverlos ni repetirlos", () => {
         const _buzon = new Buzon();
         const _entrada = new Correo(1, "Entrada", "Texto", _carlos, [_maria]);
