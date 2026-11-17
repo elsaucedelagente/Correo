@@ -552,4 +552,18 @@ describe("RF-09: correos favoritos", () => {
         expect(_correo.getFavorito()).toBe(true);
         expect(_buzon.favoritos()).toEqual([_correo]);
     });
+
+    it("restaura los favoritos enviados a su bandeja original", () => {
+        const _buzon = new Buzon();
+        const _correo = new Correo(1, "Enviado favorito", "Texto", _maria, [_carlos]);
+        _buzon.enviar(_correo);
+        _correo.marcarComoFavorito();
+
+        _buzon.eliminar(_correo);
+        expect(_buzon.favoritos()).toEqual([]);
+        _buzon.restaurar(_correo);
+
+        expect(_buzon.ubicacion(_correo)).toBe("Enviados");
+        expect(_buzon.favoritos()).toEqual([_correo]);
+    });
 });
