@@ -11,6 +11,8 @@ export interface ICorreo {
   // RF-08: estado de lectura
   marcarComoLeido(): void;
   marcarComoNoLeido(): void;
+  marcarComoFavorito(): void;
+  desmarcarComoFavorito(): void;
   validarParaEnvio(): string[];
   puedeEnviarse(): boolean;
   estaEnviado(): boolean;

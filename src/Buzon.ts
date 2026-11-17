@@ -55,6 +55,13 @@ export class Buzon {
         return filtrarCorreos(this.listar(nombre), condicion);
     }
 
+    // RF-09: la vista reúne favoritos sin incluir los correos eliminados.
+    favoritos(condicion?: Predicado<ICorreo>): ICorreo[] {
+        return (["Entrada", "Enviados", "Borradores"] as const)
+            .flatMap((nombre) => this.listar(nombre))
+            .filter((correo) => correo.getFavorito() && (condicion === undefined || condicion(correo)));
+    }
+
     // RF-10 (reduce): total, leídos y no leídos de una bandeja.
     resumen(nombre: NombreBandeja): ResumenCorreos {
         return resumirCorreos(this.listar(nombre));

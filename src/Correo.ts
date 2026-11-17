@@ -76,6 +76,14 @@ export class Correo implements ICorreo{
         this._leido = false;
     }
 
+    marcarComoFavorito(): void {
+        this._favorito = true;
+    }
+
+    desmarcarComoFavorito(): void {
+        this._favorito = false;
+    }
+
     // Un borrador puede estar incompleto. Esto devuelve la lista de lo que
     // le falta para poder enviarse; si está vacía, se puede enviar.
     validarParaEnvio(): string[] {
