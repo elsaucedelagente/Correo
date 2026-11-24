@@ -180,4 +180,29 @@ describe("GestorMail: envío entre usuarios", () => {
 
         expect(() => _recibido.setAsunto("Cambiado")).toThrow("no se puede modificar");
     });
+    it("envía 100 correos y encuentra los múltiplos de 5", () => {
+    const { _gestor, _buzonIvan, _buzonMariano } = _crearGestor();
+
+    for (let i = 1; i <= 100; i++) {
+        const _correo = Correo.crear(
+            `Correo ${i}`,
+            i % 5 === 0 ? "Multiplo de cinco" : "Correo normal",
+            _ivan,
+            [_mariano]
+        );
+
+        _gestor.enviar(_correo);
+    }
+
+    expect(_buzonIvan.cantidad("Enviados")).toBe(100);
+    expect(_buzonMariano.cantidad("Entrada")).toBe(100);
+
+    const _resultado = _buzonMariano.buscar("Multiplo de cinco");
+
+    expect(_resultado).toHaveLength(20);
+
+    expect(_resultado.map((_c) => _c.getAsunto())).toEqual(
+        Array.from({ length: 20 }, (_, i) => `Correo ${(i + 1) * 5}`)
+    );
+});
 });
